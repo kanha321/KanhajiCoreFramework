@@ -2,21 +2,28 @@ package com.kanhaji.template
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.kanhaji.core.shell.ui.FabState
 import com.kanhaji.core.shell.ui.LocalShellController
 import com.kanhaji.core.shell.ui.TopBarState
 import com.kanhaji.core.settings.ui.KCFSettingsScreen
@@ -26,10 +33,12 @@ object Screen2 : Screen {
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val shellController = LocalShellController.current
+        val shellOwner = remember { Any() }
 
-        LaunchedEffect(shellController, navigator) {
+        SideEffect {
             shellController.setTopBar(
-                TopBarState(
+                owner = shellOwner,
+                state = TopBarState(
                     title = "Screen 2",
                     showBack = true,
                     actions = {
@@ -42,7 +51,21 @@ object Screen2 : Screen {
                     }
                 )
             )
-            shellController.clearFab()
+            shellController.setFab(
+                owner = shellOwner,
+                state = FabState(
+                    isVisible = true,
+                    icon = Icons.Outlined.Image,
+                    contentDescription = "Show snackbar",
+                    onClick = { shellController.showSnackbar("FAB clicked on Screen 2") }
+                )
+            )
+        }
+
+        DisposableEffect(shellController, shellOwner) {
+            onDispose {
+                shellController.release(shellOwner)
+            }
         }
 
         Column(
@@ -52,10 +75,16 @@ object Screen2 : Screen {
         ) {
             Button(onClick = { navigator.pop() }) {
                 Icon(
-                    imageVector = Icons.Outlined.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                     contentDescription = null
                 )
                 Text("Back to Screen 1")
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(onClick = { shellController.showSnackbar("Snackbar from Screen 2") }) {
+                Text("Show Snackbar")
             }
         }
     }

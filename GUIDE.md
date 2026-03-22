@@ -11,9 +11,10 @@ A Kotlin Multiplatform (KMP) reusable foundation providing theming, settings UI,
 3. [Core Initialization](#core-initialization)
 4. [Using the Theming System](#using-the-theming-system)
 5. [Settings Screen Integration](#settings-screen-integration)
-6. [Customization Guide](#customization-guide)
-7. [API Reference](#api-reference)
-8. [Troubleshooting](#troubleshooting)
+6. [Shell UI (TopBar, FAB, Snackbar)](#shell-ui-topbar-fab-snackbar)
+7. [Customization Guide](#customization-guide)
+8. [API Reference](#api-reference)
+9. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -80,6 +81,61 @@ You now have:
 - ✅ Custom color picker with hex input
 - ✅ Persistent state saved to device storage
 - ✅ Slide transition animations
+
+---
+
+## Shell UI (TopBar, FAB, Snackbar)
+
+KCF provides a parent shell scaffold and a single binding helper so child screens stay clean.
+
+### 1) Root app host
+
+```kotlin
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.transitions.SlideTransition
+import com.kanhaji.core.shell.ui.ShellScaffold
+
+@Composable
+fun App() {
+    KCF {
+        Navigator(Screen1) { navigator ->
+            ShellScaffold(
+                canPop = navigator.canPop,
+                onBack = { navigator.pop() }
+            ) {
+                SlideTransition(navigator)
+            }
+        }
+    }
+}
+```
+
+### 2) Child screen configuration (no local Scaffold needed)
+
+```kotlin
+import com.kanhaji.core.shell.ui.BindShellState
+import com.kanhaji.core.shell.ui.FabState
+import com.kanhaji.core.shell.ui.LocalShellController
+import com.kanhaji.core.shell.ui.TopBarState
+
+@Composable
+override fun Content() {
+    val shell = LocalShellController.current
+
+    BindShellState(
+        topBar = TopBarState(title = "Home", showBack = false),
+        fab = FabState(
+            isVisible = true,
+            icon = Icons.Outlined.Add,
+            onClick = { shell.showSnackbar("FAB clicked") }
+        )
+    )
+
+    // Screen body only
+}
+```
+
+This helper handles owner tracking and cleanup automatically, so transitions do not leak stale top bar/FAB state.
 
 ---
 

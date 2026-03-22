@@ -4,19 +4,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowForward
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.kanhaji.core.shell.ui.BindShellState
+import com.kanhaji.core.shell.ui.FabState
 import com.kanhaji.core.shell.ui.LocalShellController
 import com.kanhaji.core.shell.ui.TopBarState
 import com.kanhaji.core.settings.ui.KCFSettingsScreen
@@ -27,23 +29,28 @@ object Screen1 : Screen {
         val navigator = LocalNavigator.currentOrThrow
         val shellController = LocalShellController.current
 
-        LaunchedEffect(shellController, navigator) {
-            shellController.setTopBar(
-                TopBarState(
-                    title = "Screen 1",
-                    showBack = false,
-                    actions = {
-                        IconButton(onClick = { navigator.push(KCFSettingsScreen(groups = emptyList())) }) {
-                            Icon(
-                                imageVector = Icons.Outlined.Settings,
-                                contentDescription = "Open settings"
-                            )
-                        }
+        BindShellState(
+            topBar = TopBarState(
+                title = "Screen 1",
+                showBack = false,
+                actions = {
+                    IconButton(onClick = { navigator.push(KCFSettingsScreen(groups = emptyList())) }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Settings,
+                            contentDescription = "Open settings"
+                        )
                     }
-                )
+                }
+            ),
+            fab = FabState(
+                isVisible = true,
+                icon = Icons.Outlined.Add,
+                contentDescription = "Show snackbar",
+                onClick = { 
+                    shellController.showSnackbar("FAB clicked on Screen 1") 
+                }
             )
-            shellController.clearFab()
-        }
+        )
 
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -52,7 +59,7 @@ object Screen1 : Screen {
         ) {
             Button(onClick = { navigator.push(Screen2) }) {
                 Icon(
-                    imageVector = Icons.Outlined.ArrowForward,
+                    imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
                     contentDescription = null
                 )
                 Text("Go to Screen 2")

@@ -9,22 +9,13 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.kanhaji.core.settings.ui.components.ColorPickerDialog
 import com.kanhaji.core.settings.ui.components.ThemeSelectionDialog
 
@@ -33,61 +24,41 @@ data class Group<T>(
     val items: List<T>
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun KCFSettingsComponent(
     groups: List<Group<SettingItems>>,
     model: KCFSettingsScreenModel
 ) {
-    val navigator = LocalNavigator.currentOrThrow
     val allGroups = listOf(KCFThemeGroup(model)) + groups
     val uiState = model.uiState
+    val listState = rememberLazyListState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Settings") },
-                navigationIcon = {
-                    if (navigator.canPop) {
-                        IconButton(onClick = { navigator.pop() }) {
-                            Icon(
-                                imageVector = Icons.Outlined.ArrowBack,
-                                contentDescription = "Back"
-                            )
-                        }
-                    }
-                }
-            )
+    GroupedLazyColumn(
+        groups = allGroups,
+        keySelector = { item -> item.id },
+        contentPadding = PaddingValues(0.dp),
+        listState = listState,
+        onItemClick = { _, _, item -> item.onClick() },
+        itemContent = { _, _, item ->
+            SettingsCard(item = item)
         }
-    ) { innerPadding ->
-        val listState = rememberLazyListState()
-        GroupedLazyColumn(
-            groups = allGroups,
-            keySelector = { item -> item.id },
-            contentPadding = innerPadding,
-            listState = listState,
-            onItemClick = { _, _, item -> item.onClick() },
-            itemContent = { _, _, item ->
-                SettingsCard(item = item)
-            }
+    )
+
+    if (uiState.showThemeDialog) {
+        ThemeSelectionDialog(
+            model = model,
+            onDismiss = { model.showThemeDialog = false },
+            onConfirm = { model.showThemeDialog = false }
         )
+    }
 
-        if (uiState.showThemeDialog) {
-            ThemeSelectionDialog(
-                model = model,
-                onDismiss = { model.showThemeDialog = false },
-                onConfirm = { model.showThemeDialog = false }
-            )
-        }
-
-        if (uiState.showColorPicker) {
-            ColorPickerDialog(
-                model = model,
-                currentColor = uiState.theme.customColor,
-                onDismiss = { model.showColorPicker = false },
-                onConfirm = { model.showColorPicker = false }
-            )
-        }
+    if (uiState.showColorPicker) {
+        ColorPickerDialog(
+            model = model,
+            currentColor = uiState.theme.customColor,
+            onDismiss = { model.showColorPicker = false },
+            onConfirm = { model.showColorPicker = false }
+        )
     }
 }
 
