@@ -6,10 +6,14 @@ import androidx.compose.material.icons.outlined.Brightness5
 import androidx.compose.material.icons.outlined.ColorLens
 import androidx.compose.material.icons.outlined.Colorize
 import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.kanhaji.core.theme.ThemeManager
 import com.kanhaji.core.theme.isDynamicColorSupported
 
@@ -31,7 +35,12 @@ fun KCFThemeGroup(model: KCFSettingsScreenModel): Group<SettingItems> {
         icon = if (isDarkTheme) Icons.Outlined.Brightness4 else Icons.Outlined.Brightness5,
         widget = {
             TextButton(onClick = { model.showThemeDialog = true }) {
-                Text(themeState.themeLabel)
+                Text(
+                    text = themeState.themeLabel,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.widthIn(max = 84.dp)
+                )
             }
         },
         onClick = { model.showThemeDialog = true }

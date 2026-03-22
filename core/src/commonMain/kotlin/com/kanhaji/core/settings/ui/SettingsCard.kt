@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.min
@@ -51,14 +52,17 @@ fun SettingsCard(item: SettingItems) {
                 Text(
                     text = item.title,
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 BasicText(
                     text = item.description,
                     autoSize = TextAutoSize.StepBased(minFontSize = 10.sp, maxFontSize = 16.sp),
                     maxLines = 1,
-                    style = TextStyle(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    style = TextStyle(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 

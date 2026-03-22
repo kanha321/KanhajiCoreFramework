@@ -5,6 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -36,8 +37,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
@@ -237,6 +246,7 @@ fun ShellScaffold(
     val topBarState = shellController.topBarState.value
     val fabState = shellController.fabState.value
     val snackbarMessage = shellController.snackbarMessage.value
+    val focusRequester = remember { FocusRequester() }
     val hasFab = fabState.isVisible && fabState.icon != null
     val density = LocalDensity.current
     val navigationBarsBottomPadding = with(density) {
@@ -250,8 +260,39 @@ fun ShellScaffold(
         navigationBarsBottomPadding + 16.dp
     }
 
+    val handleBackKey: (androidx.compose.ui.input.key.KeyEvent) -> Boolean = { keyEvent ->
+        if (
+            keyEvent.type == KeyEventType.KeyUp &&
+            (keyEvent.key == Key.Escape || keyEvent.key == Key.Back) &&
+            canPop
+        ) {
+            onBack()
+            true
+        } else {
+            false
+        }
+    }
+
+    LaunchedEffect(canPop, topBarState.isVisible, fabState.isVisible) {
+        // Focus requests can race with navigation transition/layout passes,
+        // so we retry briefly to make Escape/back handling stable.
+        repeat(4) {
+            delay(16)
+            focusRequester.requestFocus()
+        }
+    }
+
+    val backKeyModifier = Modifier
+        .onPreviewKeyEvent(handleBackKey)
+        .onKeyEvent(handleBackKey)
+
     CompositionLocalProvider(LocalShellController provides shellController) {
         Scaffold(
+            modifier = Modifier
+                .fillMaxSize()
+                .focusRequester(focusRequester)
+                .focusable()
+                .then(backKeyModifier),
             topBar = {
                 if (topBarState.isVisible) {
                     TopAppBar(
@@ -290,6 +331,7 @@ fun ShellScaffold(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = 12.dp)
+                        .then(backKeyModifier)
                 ) {
                     content()
                 }

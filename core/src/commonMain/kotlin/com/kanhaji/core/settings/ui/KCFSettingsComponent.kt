@@ -15,6 +15,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.kanhaji.core.settings.ui.components.ColorPickerDialog
 import com.kanhaji.core.settings.ui.components.ThemeSelectionDialog
@@ -84,6 +85,8 @@ fun <T> GroupedLazyColumn(
                     Text(
                         text = group.header,
                         style = MaterialTheme.typography.labelLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
                     )
                     HorizontalDivider()
