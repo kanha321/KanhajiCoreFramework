@@ -1,4 +1,4 @@
-package com.kanhaji.core.settings
+package com.kanhaji.core.settings.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Brightness4
@@ -13,24 +13,31 @@ import androidx.compose.runtime.Composable
 import com.kanhaji.core.theme.ThemeManager
 import com.kanhaji.core.theme.isDynamicColorSupported
 
+@Suppress("ComposableNaming")
 @Composable
 fun KCFThemeGroup(model: KCFSettingsScreenModel): Group<SettingItems> {
+    val themeState = model.uiState.theme
+    val isDarkTheme = when (themeState.themeType) {
+        ThemeManager.ThemeType.DARK -> true
+        ThemeManager.ThemeType.LIGHT -> false
+        ThemeManager.ThemeType.SYSTEM -> ThemeManager.isDarkTheme
+    }
     val items = mutableListOf<SettingItems>()
 
     items += SettingItems(
         id = "app_theme",
         title = "App Theme",
         description = "Select your preferred app theme",
-        icon = if (ThemeManager.isDarkTheme) Icons.Outlined.Brightness4 else Icons.Outlined.Brightness5,
+        icon = if (isDarkTheme) Icons.Outlined.Brightness4 else Icons.Outlined.Brightness5,
         widget = {
             TextButton(onClick = { model.showThemeDialog = true }) {
-                Text(ThemeManager.currentThemeType.name.lowercase().replaceFirstChar { it.uppercase() })
+                Text(themeState.themeLabel)
             }
         },
         onClick = { model.showThemeDialog = true }
     )
 
-    if (ThemeManager.isDarkTheme) {
+    if (isDarkTheme) {
         items += SettingItems(
             id = "pitch_black",
             title = "Pitch Black",
@@ -38,11 +45,11 @@ fun KCFThemeGroup(model: KCFSettingsScreenModel): Group<SettingItems> {
             icon = Icons.Outlined.DarkMode,
             widget = {
                 Switch(
-                    checked = ThemeManager.isAmoled,
+                    checked = themeState.isAmoled,
                     onCheckedChange = model::updateAmoled
                 )
             },
-            onClick = { model.updateAmoled(!ThemeManager.isAmoled) }
+            onClick = { model.updateAmoled(!themeState.isAmoled) }
         )
     }
 
@@ -54,15 +61,15 @@ fun KCFThemeGroup(model: KCFSettingsScreenModel): Group<SettingItems> {
             icon = Icons.Outlined.ColorLens,
             widget = {
                 Switch(
-                    checked = ThemeManager.isDynamicColor,
+                    checked = themeState.isDynamicColor,
                     onCheckedChange = model::updateDynamicColor
                 )
             },
-            onClick = { model.updateDynamicColor(!ThemeManager.isDynamicColor) }
+            onClick = { model.updateDynamicColor(!themeState.isDynamicColor) }
         )
     }
 
-    if (!ThemeManager.isDynamicColor) {
+    if (!themeState.isDynamicColor) {
         items += SettingItems(
             id = "app_color",
             title = "App Color",
@@ -74,7 +81,3 @@ fun KCFThemeGroup(model: KCFSettingsScreenModel): Group<SettingItems> {
 
     return Group(header = "Theme", items = items)
 }
-
-
-
-

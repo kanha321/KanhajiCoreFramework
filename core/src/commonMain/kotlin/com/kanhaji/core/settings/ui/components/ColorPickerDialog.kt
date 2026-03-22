@@ -1,4 +1,4 @@
-package com.kanhaji.core.settings.components
+package com.kanhaji.core.settings.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,7 +29,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
-import com.kanhaji.core.settings.KCFSettingsScreenModel
+import com.kanhaji.core.settings.ui.KCFSettingsScreenModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -153,4 +153,3 @@ fun hexToColor(hex: String): Color {
         Color(0xFF6750A4)
     }
 }
-

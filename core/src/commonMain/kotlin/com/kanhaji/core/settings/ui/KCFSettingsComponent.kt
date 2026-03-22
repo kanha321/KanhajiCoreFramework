@@ -1,7 +1,5 @@
-package com.kanhaji.core.settings
+package com.kanhaji.core.settings.ui
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +8,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -24,10 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.kanhaji.core.settings.components.ColorPickerDialog
-import com.kanhaji.core.settings.components.ThemeSelectionDialog
-import com.kanhaji.core.theme.ThemeManager
-import androidx.compose.foundation.shape.RoundedCornerShape
+import com.kanhaji.core.settings.ui.components.ColorPickerDialog
+import com.kanhaji.core.settings.ui.components.ThemeSelectionDialog
 
 data class Group<T>(
     val header: String,
@@ -42,6 +41,7 @@ fun KCFSettingsComponent(
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val allGroups = listOf(KCFThemeGroup(model)) + groups
+    val uiState = model.uiState
 
     Scaffold(
         topBar = {
@@ -72,7 +72,7 @@ fun KCFSettingsComponent(
             }
         )
 
-        if (model.showThemeDialog) {
+        if (uiState.showThemeDialog) {
             ThemeSelectionDialog(
                 model = model,
                 onDismiss = { model.showThemeDialog = false },
@@ -80,10 +80,10 @@ fun KCFSettingsComponent(
             )
         }
 
-        if (model.showColorPicker) {
+        if (uiState.showColorPicker) {
             ColorPickerDialog(
                 model = model,
-                currentColor = ThemeManager.customColor.value,
+                currentColor = uiState.theme.customColor,
                 onDismiss = { model.showColorPicker = false },
                 onConfirm = { model.showColorPicker = false }
             )
@@ -137,3 +137,4 @@ fun <T> GroupedLazyColumn(
         }
     }
 }
+

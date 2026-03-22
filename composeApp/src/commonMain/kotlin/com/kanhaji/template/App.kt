@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
-import com.kanhaji.core.settings.KCFSettingsScreen
+import com.kanhaji.core.settings.ui.KCFSettingsScreen
 import com.kanhaji.core.theme.KCF
 
 @Composable

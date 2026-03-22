@@ -1,4 +1,4 @@
-package com.kanhaji.core.settings
+package com.kanhaji.core.settings.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector

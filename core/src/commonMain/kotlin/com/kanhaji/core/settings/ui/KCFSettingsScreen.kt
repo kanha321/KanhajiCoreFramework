@@ -1,4 +1,4 @@
-package com.kanhaji.core.settings
+package com.kanhaji.core.settings.ui
 
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.model.rememberScreenModel
