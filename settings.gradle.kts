@@ -17,6 +17,11 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev") {
+            mavenContent {
+                includeGroupAndSubgroups("org.jetbrains.compose")
+            }
+        }
         google {
             mavenContent {
                 includeGroupAndSubgroups("androidx")
@@ -33,3 +38,4 @@ plugins {
 }
 
 include(":composeApp")
+include(":core")

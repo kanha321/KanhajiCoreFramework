@@ -1,45 +1,144 @@
 [versions]
+# ─── Android ───────────────────────────────────────────────────────────────────
 agp = "8.11.2"
 android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "36"
+
+# ─── AndroidX ──────────────────────────────────────────────────────────────────
 androidx-activity = "1.12.2"
 androidx-appcompat = "1.7.1"
 androidx-core = "1.17.0"
 androidx-espresso = "3.7.0"
 androidx-lifecycle = "2.9.6"
 androidx-testExt = "1.3.0"
+
+# ─── Compose ───────────────────────────────────────────────────────────────────
 composeHotReload = "1.0.0"
 composeMultiplatform = "1.10.0"
-junit = "4.13.2"
-kotlin = "2.3.0"
-kotlinx-coroutines = "1.10.2"
+composeMaterialIcons = "1.7.3"
 material3 = "1.10.0-alpha05"
 
+# ─── Kotlin ────────────────────────────────────────────────────────────────────
+# kotlinSerialization must always match kotlin version exactly — never change one without the other
+kotlin = "2.3.0"
+kotlinx-coroutines = "1.10.2"
+kotlinSerialization = "2.3.0"
+
+# ─── Testing ───────────────────────────────────────────────────────────────────
+junit = "4.13.2"
+
+# ─── KCF Core Dependencies ─────────────────────────────────────────────────────
+ksafe = "1.7.1"
+materialKolor = "4.1.1"
+voyager = "1.1.0-beta03"
+colorpicker = "1.1.3"
+ktor = "3.4.1"
+
+
 [libraries]
+# ─── Kotlin Testing ────────────────────────────────────────────────────────────
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+
+# ─── JUnit ─────────────────────────────────────────────────────────────────────
 junit = { module = "junit:junit", version.ref = "junit" }
+
+# ─── AndroidX Core ─────────────────────────────────────────────────────────────
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
-androidx-testExt-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-testExt" }
-androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-espresso" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
-compose-uiTooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "composeMultiplatform" }
+
+# ─── AndroidX Testing ──────────────────────────────────────────────────────────
+androidx-testExt-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-testExt" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-espresso" }
+
+# ─── AndroidX Lifecycle ────────────────────────────────────────────────────────
 androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+
+# ─── Compose Multiplatform ─────────────────────────────────────────────────────
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
-compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
+compose-uiTooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "composeMultiplatform" }
 compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
+compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
+
+# ─── Compose Material3 ─────────────────────────────────────────────────────────
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
+
+# ─── Material Icons ────────────────────────────────────────────────────────────
+# WARNING: material-icons-extended is a very large dependency (~12MB)
+# Only include it in modules that actually need the extended icon set
+# If you only need basic icons use material-icons-core instead
+compose-material-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "composeMaterialIcons" }
+compose-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "composeMaterialIcons" }
+
+# ─── Coroutines ────────────────────────────────────────────────────────────────
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 
+# ─── Kotlin Serialization ──────────────────────────────────────────────────────
+# Required by KSafe for complex object storage
+# Version must always match kotlin version
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.8.1" }
+
+# ─── KSafe — Encrypted + Normal Persistence (Android / iOS / Desktop) ──────────
+# Android  → hardware-backed Android Keystore
+# iOS      → hardware-backed Keychain
+# Desktop  → AES-256-GCM software-backed under ~/.eu_anifantakis_ksafe/
+# prefs    → KSafeMemoryPolicy.PLAIN_TEXT  — use for settings, UI state, theme
+# secure   → KSafeMemoryPolicy.ENCRYPTED   — use for tokens, credentials
+ksafe = { module = "eu.anifantakis:ksafe", version.ref = "ksafe" }
+ksafe-compose = { module = "eu.anifantakis:ksafe-compose", version.ref = "ksafe" }
+
+# ─── Material Kolor — Dynamic Color Scheme From Seed Color ─────────────────────
+# KMP port of Google's own Material Color Utilities
+# Works entirely in commonMain — zero expect/actual needed
+# Feed it a seed color → get a full Material3 color scheme
+material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
+
+# ─── Voyager — Navigation + ScreenModel ────────────────────────────────────────
+# IMPORTANT: ScreenModel must always be a class, never an object
+# Always obtain via rememberScreenModel { MyScreenModel() }
+# Never instantiate ScreenModel manually — Voyager manages its lifecycle
+voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-screenmodel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
+voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
+
+# ─── ColorPicker — KMP Compatible HSV Color Picker ─────────────────────────────
+# skydoves colorpicker-compose is fully KMP compatible
+# Use HsvColorPicker in commonMain directly — no expect/actual needed
+colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker" }
+
+# ─── Ktor Client — Networking ──────────────────────────────────────────────────
+# ktor-client-core goes in commonMain
+# Platform engines go in their respective source sets:
+#   androidMain  → ktor-client-okhttp
+#   iosMain      → ktor-client-darwin
+#   jvmMain      → ktor-client-java
+# Content negotiation + serialization go in commonMain
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+
+
 [plugins]
+# ─── Android ───────────────────────────────────────────────────────────────────
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
+
+# ─── Compose ───────────────────────────────────────────────────────────────────
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+
+# ─── Kotlin ────────────────────────────────────────────────────────────────────
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+
+# ─── Kotlin Serialization — version must match kotlin version exactly ───────────
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization" }
