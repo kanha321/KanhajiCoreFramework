@@ -8,7 +8,7 @@ import com.kanhaji.core.shell.ui.FabState
 import com.kanhaji.core.shell.ui.TopBarState
 
 data class KCFSettingsScreen(
-    val groups: List<Group<SettingItems>>
+    val groups: List<Group<SettingItems>> = emptyList()
 ) : Screen {
     @Composable
     override fun Content() {
