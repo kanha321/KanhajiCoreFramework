@@ -66,6 +66,7 @@ data class TopBarState(
 data class FabState(
     val isVisible: Boolean = false,
     val icon: ImageVector? = null,
+    val customFab: (@Composable () -> Unit)? = null,
     val contentDescription: String = "Action",
     val onClick: () -> Unit = {}
 )
@@ -86,8 +87,16 @@ class ShellController internal constructor(
     private var activeTopBarOwner: Any? = null
     private var activeFabOwner: Any? = null
     internal val snackbarMessage = mutableStateOf<ShellSnackbarMessage?>(null)
+    private val escapeAsBackState = mutableStateOf(true)
     private var snackbarJob: Job? = null
     private var snackbarId = 0L
+
+    val escapeAsBackEnabled: Boolean
+        get() = escapeAsBackState.value
+
+    fun setEscapeAsBack(enabled: Boolean) {
+        escapeAsBackState.value = enabled
+    }
 
     fun setTopBar(state: TopBarState) {
         topBarState.value = state
@@ -238,6 +247,7 @@ fun rememberShellController(
 fun ShellScaffold(
     canPop: Boolean,
     onBack: () -> Unit,
+    escapeAsBack: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -246,8 +256,9 @@ fun ShellScaffold(
     val topBarState = shellController.topBarState.value
     val fabState = shellController.fabState.value
     val snackbarMessage = shellController.snackbarMessage.value
+    val escapeAsBackEnabled = shellController.escapeAsBackEnabled
     val focusRequester = remember { FocusRequester() }
-    val hasFab = fabState.isVisible && fabState.icon != null
+    val hasFab = fabState.isVisible && (fabState.customFab != null || fabState.icon != null)
     val density = LocalDensity.current
     val navigationBarsBottomPadding = with(density) {
         WindowInsets.navigationBars.getBottom(this).toDp()
@@ -260,8 +271,13 @@ fun ShellScaffold(
         navigationBarsBottomPadding + 16.dp
     }
 
+    LaunchedEffect(escapeAsBack) {
+        shellController.setEscapeAsBack(escapeAsBack)
+    }
+
     val handleBackKey: (androidx.compose.ui.input.key.KeyEvent) -> Boolean = { keyEvent ->
         if (
+            escapeAsBackEnabled &&
             keyEvent.type == KeyEventType.KeyUp &&
             (keyEvent.key == Key.Escape || keyEvent.key == Key.Back) &&
             canPop
@@ -273,7 +289,8 @@ fun ShellScaffold(
         }
     }
 
-    LaunchedEffect(canPop, topBarState.isVisible, fabState.isVisible) {
+    LaunchedEffect(escapeAsBackEnabled, canPop, topBarState.isVisible, fabState.isVisible) {
+        if (!escapeAsBackEnabled) return@LaunchedEffect
         // Focus requests can race with navigation transition/layout passes,
         // so we retry briefly to make Escape/back handling stable.
         repeat(4) {
@@ -290,8 +307,7 @@ fun ShellScaffold(
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
-                .focusRequester(focusRequester)
-                .focusable()
+                .then(if (escapeAsBackEnabled) Modifier.focusRequester(focusRequester).focusable() else Modifier)
                 .then(backKeyModifier),
             topBar = {
                 if (topBarState.isVisible) {
@@ -312,12 +328,16 @@ fun ShellScaffold(
                 }
             },
             floatingActionButton = {
-                if (fabState.isVisible && fabState.icon != null) {
-                    FloatingActionButton(onClick = fabState.onClick) {
-                        Icon(
-                            imageVector = fabState.icon,
-                            contentDescription = fabState.contentDescription
-                        )
+                if (fabState.isVisible) {
+                    if (fabState.customFab != null) {
+                        fabState.customFab.invoke()
+                    } else if (fabState.icon != null) {
+                        FloatingActionButton(onClick = fabState.onClick) {
+                            Icon(
+                                imageVector = fabState.icon,
+                                contentDescription = fabState.contentDescription
+                            )
+                        }
                     }
                 }
             }

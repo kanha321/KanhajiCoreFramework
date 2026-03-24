@@ -28,6 +28,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.kanhaji.core.settings.ui.KCFSettingsScreenModel
 import com.kanhaji.core.theme.ThemeManager
+import com.kanhaji.core.theme.isSystemThemeModeSupported
+import com.kanhaji.core.theme.normalizeThemeTypeForPlatform
 
 data class RadioItem(
     val label: String,
@@ -97,17 +99,29 @@ fun ThemeSelectionDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
-    val currentThemeType = model.uiState.theme.themeType
+    val currentThemeType = normalizeThemeTypeForPlatform(model.uiState.theme.themeType)
     val originalTheme = remember(currentThemeType) { currentThemeType }
+    val selectableThemeTypes = remember {
+        buildList {
+            add(ThemeManager.ThemeType.LIGHT)
+            add(ThemeManager.ThemeType.DARK)
+            if (isSystemThemeModeSupported()) {
+                add(ThemeManager.ThemeType.SYSTEM)
+            }
+        }
+    }
+    val initialSelection = selectableThemeTypes.indexOf(currentThemeType).takeIf { it >= 0 } ?: 0
+    val options = selectableThemeTypes.map { type ->
+        RadioItem(
+            label = type.name.lowercase().replaceFirstChar { it.uppercase() },
+            onClick = { model.updateTheme(type) }
+        )
+    }
 
     RadioSelectionDialog(
         title = "Select App Theme",
-        options = listOf(
-            RadioItem(label = "Light") { model.updateTheme(ThemeManager.ThemeType.LIGHT) },
-            RadioItem(label = "Dark") { model.updateTheme(ThemeManager.ThemeType.DARK) },
-            RadioItem(label = "System") { model.updateTheme(ThemeManager.ThemeType.SYSTEM) }
-        ),
-        initialSelection = model.uiState.theme.themeType.ordinal,
+        options = options,
+        initialSelection = initialSelection,
         icon = Icons.Outlined.Brightness4,
         onConfirm = onConfirm,
         onDismiss = {

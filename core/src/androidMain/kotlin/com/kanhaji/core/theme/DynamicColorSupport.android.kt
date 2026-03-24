@@ -11,6 +11,8 @@ actual fun isDynamicColorSupported(): Boolean {
     return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 }
 
+actual fun isSystemThemeModeSupported(): Boolean = true
+
 @Composable
 actual fun rememberPlatformDynamicColorScheme(isDarkTheme: Boolean): ColorScheme? {
     if (!ThemeManager.isDynamicColor || !isDynamicColorSupported()) {

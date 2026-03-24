@@ -14,20 +14,20 @@ A separate, reusable component with full customization support:
 
 ```
 ┌─────────────────────────────────────────────────┐
-│ CustomSnackbar (@Composable)                   │
+│ CustomSnackbar (@Composable)                    │
 ├─────────────────────────────────────────────────┤
 │ • Message display                               │
-│ • Auto-dismiss (configurable)                  │
-│ • Dismiss button (X icon)                      │
-│ • Slide animation                              │
-│ • Fade animation                               │
+│ • Auto-dismiss (configurable)                   │
+│ • Dismiss button (X icon)                       │
+│ • Slide animation                               │
+│ • Fade animation                                │
 ├─────────────────────────────────────────────────┤
 │ Config Options:                                 │
-│ • containerColor (background)                  │
-│ • contentColor (text/icon)                     │
-│ • containerPadding (spacing)                   │
-│ • shape (corner radius)                        │
-│ • autoDismissDuration (3s default)            │
+│ • containerColor (background)                   │
+│ • contentColor (text/icon)                      │
+│ • containerPadding (spacing)                    │
+│ • shape (corner radius)                         │
+│ • autoDismissDuration (3s default)              │
 └─────────────────────────────────────────────────┘
 ```
 

@@ -5,6 +5,7 @@ import com.kanhaji.core.settings.data.ThemeSettingsRepository
 import com.kanhaji.core.settings.domain.ThemeSettings
 import com.kanhaji.core.settings.domain.ThemeSettingsApplier
 import com.kanhaji.core.theme.ThemeManager
+import com.kanhaji.core.theme.normalizeThemeTypeForPlatform
 
 class LoadThemeSettingsUseCase(
     private val repository: ThemeSettingsRepository,
@@ -12,8 +13,12 @@ class LoadThemeSettingsUseCase(
 ) {
     operator fun invoke(): ThemeSettings {
         val settings = repository.load()
-        applier.apply(settings)
-        return settings
+        val normalized = settings.copy(themeType = normalizeThemeTypeForPlatform(settings.themeType))
+        if (normalized.themeType != settings.themeType) {
+            repository.saveThemeType(normalized.themeType)
+        }
+        applier.apply(normalized)
+        return normalized
     }
 }
 
@@ -22,8 +27,9 @@ class UpdateThemeTypeUseCase(
     private val applier: ThemeSettingsApplier
 ) {
     operator fun invoke(themeType: ThemeManager.ThemeType): ThemeSettings {
-        repository.saveThemeType(themeType)
-        val updated = repository.load().copy(themeType = themeType)
+        val normalizedThemeType = normalizeThemeTypeForPlatform(themeType)
+        repository.saveThemeType(normalizedThemeType)
+        val updated = repository.load().copy(themeType = normalizedThemeType)
         applier.apply(updated)
         return updated
     }

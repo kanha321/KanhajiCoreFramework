@@ -3,9 +3,11 @@ package com.kanhaji.core.settings.ui
 import androidx.compose.ui.graphics.Color
 import com.kanhaji.core.settings.domain.ThemeSettings
 import com.kanhaji.core.theme.ThemeManager
+import com.kanhaji.core.theme.defaultThemeTypeForPlatform
+import com.kanhaji.core.theme.normalizeThemeTypeForPlatform
 
 data class ThemeSettingsUiState(
-    val themeType: ThemeManager.ThemeType = ThemeManager.ThemeType.SYSTEM,
+    val themeType: ThemeManager.ThemeType = defaultThemeTypeForPlatform(),
     val isDarkTheme: Boolean = false,
     val isAmoled: Boolean = false,
     val isDynamicColor: Boolean = false,
@@ -22,14 +24,16 @@ data class SettingsUiState(
 )
 
 fun ThemeSettings.toUiState(): ThemeSettingsUiState {
-    val resolvedDarkTheme = when (themeType) {
+    val platformThemeType = normalizeThemeTypeForPlatform(themeType)
+
+    val resolvedDarkTheme = when (platformThemeType) {
         ThemeManager.ThemeType.DARK -> true
         ThemeManager.ThemeType.LIGHT -> false
         ThemeManager.ThemeType.SYSTEM -> ThemeManager.isDarkTheme
     }
 
     return ThemeSettingsUiState(
-        themeType = themeType,
+        themeType = platformThemeType,
         isDarkTheme = resolvedDarkTheme,
         isAmoled = isAmoled,
         isDynamicColor = isDynamicColor,

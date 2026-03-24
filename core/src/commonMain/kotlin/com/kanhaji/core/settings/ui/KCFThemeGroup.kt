@@ -7,6 +7,7 @@ import androidx.compose.material.icons.outlined.ColorLens
 import androidx.compose.material.icons.outlined.Colorize
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -24,7 +25,7 @@ fun KCFThemeGroup(model: KCFSettingsScreenModel): Group<SettingItems> {
     val isDarkTheme = when (themeState.themeType) {
         ThemeManager.ThemeType.DARK -> true
         ThemeManager.ThemeType.LIGHT -> false
-        ThemeManager.ThemeType.SYSTEM -> ThemeManager.isDarkTheme
+        ThemeManager.ThemeType.SYSTEM -> isSystemInDarkTheme()
     }
     val items = mutableListOf<SettingItems>()
 

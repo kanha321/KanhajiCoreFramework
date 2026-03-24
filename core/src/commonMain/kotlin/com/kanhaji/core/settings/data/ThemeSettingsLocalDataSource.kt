@@ -7,6 +7,8 @@ import com.kanhaji.core.storage.KSafeProvider
 import com.kanhaji.core.storage.getDirect
 import com.kanhaji.core.storage.putDirect
 import com.kanhaji.core.theme.ThemeManager
+import com.kanhaji.core.theme.defaultThemeTypeForPlatform
+import com.kanhaji.core.theme.normalizeThemeTypeForPlatform
 
 class ThemeSettingsLocalDataSource {
     fun readThemeSettings(): ThemeSettings {
@@ -14,13 +16,15 @@ class ThemeSettingsLocalDataSource {
         val savedColor = getDirect(prefs, Keys.CUSTOM_COLOR, Color(0xFF6750A4).toArgb())
         val savedAmoled = getDirect(prefs, Keys.IS_AMOLED, false)
         val savedDynamic = getDirect(prefs, Keys.IS_DYNAMIC_COLOR, false)
-        val savedThemeType = getDirect(prefs, Keys.THEME_TYPE, ThemeManager.ThemeType.SYSTEM.name)
+        val defaultThemeType = defaultThemeTypeForPlatform()
+        val savedThemeType = getDirect(prefs, Keys.THEME_TYPE, defaultThemeType.name)
 
         val parsedTheme = ThemeManager.ThemeType.entries.firstOrNull { it.name == savedThemeType }
-            ?: ThemeManager.ThemeType.SYSTEM
+            ?: defaultThemeType
+        val normalizedTheme = normalizeThemeTypeForPlatform(parsedTheme)
 
         return ThemeSettings(
-            themeType = parsedTheme,
+            themeType = normalizedTheme,
             isAmoled = savedAmoled,
             isDynamicColor = savedDynamic,
             customColor = Color(savedColor)
@@ -28,7 +32,7 @@ class ThemeSettingsLocalDataSource {
     }
 
     fun writeThemeType(themeType: ThemeManager.ThemeType) {
-        putDirect(KSafeProvider.prefs, Keys.THEME_TYPE, themeType.name)
+        putDirect(KSafeProvider.prefs, Keys.THEME_TYPE, normalizeThemeTypeForPlatform(themeType).name)
     }
 
     fun writeAmoled(enabled: Boolean) {

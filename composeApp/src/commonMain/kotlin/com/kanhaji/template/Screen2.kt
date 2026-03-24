@@ -19,6 +19,8 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -27,6 +29,7 @@ import com.kanhaji.core.shell.ui.FabState
 import com.kanhaji.core.shell.ui.LocalShellController
 import com.kanhaji.core.shell.ui.TopBarState
 import com.kanhaji.core.settings.ui.KCFSettingsScreen
+import com.kanhaji.core.theme.ThemeManager
 
 object Screen2 : Screen {
     @Composable
@@ -86,9 +89,21 @@ object Screen2 : Screen {
             Button(onClick = { shellController.showSnackbar("Snackbar from Screen 2") }) {
                 Text("Show Snackbar")
             }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                colorToHex(ThemeManager.customColor.value)
+            )
         }
     }
 }
+
+private fun colorToHex(color: Color): String =
+    (color.toArgb() and 0x00FFFFFF)
+        .toString(16)
+        .padStart(6, '0')
+        .uppercase()
 
 
 

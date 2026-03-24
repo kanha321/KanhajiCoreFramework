@@ -12,15 +12,18 @@ object ThemeManager {
         SYSTEM
     }
 
-    var currentThemeType by mutableStateOf(ThemeType.SYSTEM)
-    var isDarkTheme by mutableStateOf(false)
+    private val defaultThemeType = defaultThemeTypeForPlatform()
+
+    var currentThemeType by mutableStateOf(defaultThemeType)
+    var isDarkTheme by mutableStateOf(defaultThemeType == ThemeType.DARK)
     var isAmoled by mutableStateOf(false)
     var isDynamicColor by mutableStateOf(false)
     var customColor = mutableStateOf(Color(0xFF6750A4))
 
     fun setTheme(type: ThemeType) {
-        currentThemeType = type
-        isDarkTheme = when (type) {
+        val resolvedType = normalizeThemeTypeForPlatform(type)
+        currentThemeType = resolvedType
+        isDarkTheme = when (resolvedType) {
             ThemeType.LIGHT -> false
             ThemeType.DARK -> true
             ThemeType.SYSTEM -> false
