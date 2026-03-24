@@ -429,3 +429,4 @@ Your app now has:
 **Total Setup Time: ~15 minutes ⏱️**
 
 **Questions?** Check the GUIDE.md or file an issue on GitHub!
+

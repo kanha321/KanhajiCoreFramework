@@ -542,3 +542,4 @@ fun settingsScreenShowsThemeButton() {
 
 **Last updated**: March 22, 2026  
 **KCF Version**: 1.0.0-stable
+

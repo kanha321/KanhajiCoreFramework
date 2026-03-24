@@ -205,3 +205,4 @@ See **GUIDE.md** for:
 
 **Last updated**: March 22, 2026  
 **KCF Version**: 1.0.0
+
