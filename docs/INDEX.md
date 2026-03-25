@@ -23,6 +23,12 @@ Complete guide to using Kanha Core Framework in your Kotlin Multiplatform projec
 | **[PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)** | How KCF is organized and where each component lives |
 | **[GRADLE_DEPENDENCY_VERIFICATION_REPORT.md](./GRADLE_DEPENDENCY_VERIFICATION_REPORT.md)** | Dependency verification and compatibility matrix |
 
+### For Deep Dives into Specific Systems
+
+| Document | Purpose |
+|----------|---------|
+| **[KSAFE.md](./KSAFE.md)** | Complete KSafe wrapper API reference with examples |
+
 ---
 
 ## 🎯 Quick Navigation
@@ -195,7 +201,7 @@ putDirect(prefs, "key", "value")
 val value = getDirect(prefs, "key", "default")
 ```
 
-**Learn more:** [GUIDE.md — Core Initialization](./GUIDE.md#core-initialization)
+**Learn more:** [KSAFE.md — KSafe Wrapper API Reference](./KSAFE.md)
 
 ---
 

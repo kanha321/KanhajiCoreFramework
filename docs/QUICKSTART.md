@@ -251,14 +251,6 @@ object HomeScreen : Screen {
     }
 }
 
-object SettingsScreen : Screen {
-    @Composable
-    override fun Content() {
-        // ✅ Use KCFSettingsScreen for complete theming UI
-        KCFSettingsScreen(groups = emptyList())
-    }
-}
-
 // Main app composable
 @Composable
 @Preview
@@ -277,8 +269,8 @@ fun App() {
                             label = { Text("Home") }
                         )
                         NavigationBarItem(
-                            selected = navigator.lastItem is SettingsScreen,
-                            onClick = { navigator.push(SettingsScreen) },
+                            selected = navigator.lastItem is KCFSettingsScreen,
+                            onClick = { navigator.push(KCFSettingsScreen()) },
                             icon = { Icon(Icons.Outlined.Settings, null) },
                             label = { Text("Settings") }
                         )
@@ -350,43 +342,50 @@ X actionable tasks: X executed
 
 ### Update `App.kt` to include custom settings
 
+You can push `KCFSettingsScreen` directly. You do not need to create a separate wrapper `SettingsScreen` unless you want extra app-specific logic.
+
+`KCFSettingsScreen` defaults `groups` to `emptyList()`, so pass groups only when you actually have app-specific settings.
+
 ```kotlin
 import com.kanhaji.core.settings.Group
 import com.kanhaji.core.settings.SettingItems
 import androidx.compose.material3.Switch
 
-object SettingsScreen : Screen {
-    @Composable
-    override fun Content() {
-        KCFSettingsScreen(
-            groups = listOf(
-                // Your app-specific settings
-                Group(
-                    header = "Notifications",
-                    items = listOf(
-                        SettingItems(
-                            id = "notifications_enabled",
-                            title = "Push Notifications",
-                            description = "Receive app notifications",
-                            icon = Icons.Outlined.Notifications,
-                            widget = {
-                                Switch(
-                                    checked = notificationsEnabled,
-                                    onCheckedChange = { enabled ->
-                                        notificationsEnabled = enabled
-                                    }
-                                )
-                            },
-                            onClick = {
-                                notificationsEnabled = !notificationsEnabled
-                            }
+NavigationBarItem(
+    selected = navigator.lastItem is KCFSettingsScreen,
+    onClick = {
+        navigator.push(
+            KCFSettingsScreen(
+                groups = listOf(
+                    Group(
+                        header = "Notifications",
+                        items = listOf(
+                            SettingItems(
+                                id = "notifications_enabled",
+                                title = "Push Notifications",
+                                description = "Receive app notifications",
+                                icon = Icons.Outlined.Notifications,
+                                widget = {
+                                    Switch(
+                                        checked = notificationsEnabled,
+                                        onCheckedChange = { enabled ->
+                                            notificationsEnabled = enabled
+                                        }
+                                    )
+                                },
+                                onClick = {
+                                    notificationsEnabled = !notificationsEnabled
+                                }
+                            )
                         )
                     )
                 )
             )
         )
-    }
-}
+    },
+    icon = { Icon(Icons.Outlined.Settings, null) },
+    label = { Text("Settings") }
+)
 ```
 
 ---

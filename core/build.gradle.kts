@@ -31,21 +31,22 @@ kotlin {
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
-            implementation(libs.compose.material.icons.extended)
             implementation(libs.compose.ui)
-            implementation(libs.voyager.navigator)
-            implementation(libs.voyager.screenmodel)
 
-            implementation(libs.material.kolor)
-            implementation(libs.colorpicker.compose)
+            api(libs.compose.material.icons.extended)
+            api(libs.voyager.navigator)
+            api(libs.voyager.screenmodel)
 
-            implementation(libs.ksafe)
-            implementation(libs.ksafe.compose)
+            api(libs.material.kolor)
+            api(libs.colorpicker.compose)
 
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.kotlinx.json)
-            implementation(libs.ktor.client.logging)
+            api(libs.ksafe)
+            api(libs.ksafe.compose)
+
+            api(libs.ktor.client.core)
+            api(libs.ktor.client.content.negotiation)
+            api(libs.ktor.serialization.kotlinx.json)
+            api(libs.ktor.client.logging)
         }
 
         androidMain.dependencies {
@@ -79,6 +80,3 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
-
-
-
